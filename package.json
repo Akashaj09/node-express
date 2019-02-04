@@ -1,0 +1,12 @@
+{
+  "name": "node_express",
+  "version": "1.0.0",
+  "description": "node express app",
+  "main": "index.js",
+  "repository": "https://github.com/Akashaj09/node-express.git",
+  "author": "Akash",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.16.4"
+  }
+}
