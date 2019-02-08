@@ -1,0 +1,41 @@
+<%- include('master/header'); -%>
+<br>
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        This is just a simple chat room
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-4">
+                                <ul class="nav flex-column nav-tabs" id="myTab" role="tablist">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home"
+                                           role="tab" aria-controls="home" aria-selected="true">User name 1</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="profile-tab" data-toggle="tab"
+                                           href="#profile" role="tab" aria-controls="profile"
+                                           aria-selected="false">User name 2</a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-8">
+                                <div class="tab-content">
+                                    <div class="tab-pane active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                                        Room 1
+                                    </div>
+                                    <div class="tab-pane" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                                        Room 2
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<%- include('master/footer') %>
