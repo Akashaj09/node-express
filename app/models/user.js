@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 const sequelize = require('../../config/database');
-const bcrypt = require('bcrypt');
+
 let User = sequelize.define('user', {
     name: {
         type: Sequelize.STRING,
@@ -8,10 +8,24 @@ let User = sequelize.define('user', {
     },
     email: {
         type: Sequelize.STRING,
-        defaultValue: ''
+        validate: {
+            isEmail: {
+                msg: 'This is not a valid email'
+            },
+            notEmpty: {
+                msg: 'Email field is required'
+            },
+            min: 4,
+        }
     },
     password: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        validate: {
+            notEmpty: {
+                msg: 'Password field is required'
+            },
+            min: 6
+        }
     }
 });
 
