@@ -37,7 +37,7 @@ router.get('/login', (req, res, next) => {
 
 router.post('/login', (req, res, next) => {
     userController.login(req.body).then((response) => {
-        res.send(response);
+        res.header('x-auth', response.token).send(response);
     }).catch((errors) => {
         res.send(errors);
     });

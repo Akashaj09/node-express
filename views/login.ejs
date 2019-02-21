@@ -1,8 +1,8 @@
 <%- include('master/header'); -%>
-<br>
+<br xmlns="">
 <div class="container">
     <div class="row">
-        <div class="col-6 offset-3">
+        <div class="col-md-6 offset-md-3">
             <form method="post" action="/login">
                 <div class="card">
                     <div class="card-header bg-success text-white">
@@ -27,3 +27,17 @@
     </div>
 </div>
 <%- include('master/footer') %>
+
+<script>
+    $("form").submit(function (event) {
+        $.ajax({
+            url: '/login',
+            data: $("form").serialize(),
+            type: 'POST',
+            success: function (response) {
+                alert(response.message);
+            }
+        });
+        event.preventDefault();
+    });
+</script>

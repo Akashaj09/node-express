@@ -23,4 +23,5 @@ let Message = sequelize.define('message', {
         allowNull: true
     }
 });
-Message.sync({ force: true });
+
+module.exports = Message;

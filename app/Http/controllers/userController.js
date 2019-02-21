@@ -1,6 +1,7 @@
-let User = require('../../models/user');
-let bcrypt = require("bcrypt");
-
+const User = require('../../models/user');
+const bcrypt = require("bcrypt");
+const Token = require('../../models/Token');
+const jwt = require('jsonwebtoken');
 let createUser = (user) => {
     return new Promise((resolve, reject) => {
         User.create({ name: user.name,
@@ -22,14 +23,14 @@ let login = (user) => {
             where: {
                 email: user.email
             }
-        }).then((response) => {
-            if (!response){
+        }).then((existUser) => {
+            if (!existUser){
                 return reject({
                     status: false,
                     message: 'User not found'
                 });
             }
-            bcrypt.compare(user.password, response.password, function(error, response)  {
+            bcrypt.compare(user.password, existUser.password, (error, response) =>  {
                 if(error){
                     return reject({
                         status: false,
@@ -37,9 +38,14 @@ let login = (user) => {
                     });
                 }
                 if (response){
-                    return resolve({
-                        status: true,
-                        message: 'You are ready to login'
+                    createAccessToken(existUser).then(response => {
+                        return resolve({
+                            status: true,
+                            message: 'Successfully logged in',
+                            token: response.token,
+                            email: existUser.email,
+                            name: existUser.name
+                        });
                     });
                 }
             });
@@ -49,6 +55,17 @@ let login = (user) => {
                 message: 'User not found'
             });
         });
+    });
+};
+
+let createAccessToken = (user) => {
+    const token = jwt.sign({_id: user.id}, 'abcd123').toString();
+    return Token.create({
+        user: user.id,
+        access: 'auth',
+        token
+    }).then(response => {
+        return response
     });
 };
 

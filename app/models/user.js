@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize');
 const sequelize = require('../../config/database');
+const Token = require('./Token');
 
 let User = sequelize.define('user', {
     name: {
@@ -27,6 +28,15 @@ let User = sequelize.define('user', {
             min: 6
         }
     }
+}, {
+    indexes: [
+        {
+            unique: true,
+            fields: ['email']
+        }
+    ]
 });
+
+User.hasMany(Token, {as: 'tokens'});
 
 module.exports = User;
