@@ -6,10 +6,16 @@ let createUser = (user) => {
     return new Promise((resolve, reject) => {
         User.create({ name: user.name,
             email: user.email,
-            password: user.password !== '' ? bcrypt.hashSync(user.password, 10): '' }).then(() => {
-            resolve({
-                status: true,
-                message: 'Your account has been created successfully'
+            password: user.password !== '' ? bcrypt.hashSync(user.password, 10): ''
+        }).then((user) => {
+            createAccessToken(user).then(response => {
+                resolve({
+                    status: true,
+                    message: 'Successfully logged in',
+                    name: user.name,
+                    email: user.email,
+                    token: response.token
+                });
             });
         }).catch((error) =>   {
             reject(error);
@@ -61,7 +67,7 @@ let login = (user) => {
 let createAccessToken = (user) => {
     const token = jwt.sign({_id: user.id}, 'abcd123').toString();
     return Token.create({
-        user: user.id,
+        userId: user.id,
         access: 'auth',
         token
     }).then(response => {
