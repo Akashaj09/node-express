@@ -1,12 +1,14 @@
 let express = require('express');
 let router = express.Router();
 let app = require('../app');
+let Cookies = require('cookies');
 let userController = require(app.controllers+'/userController');
 let auth = require('./auth');
 
-router.get('/', (req, res, next) => {
+router.get('/', auth, (req, res, next) => {
     res.render("index", {
-        title: 'Chat app'
+        title: 'Chat app',
+        auth: ''
     });
 });
 router.get('/create-account', function (req, res,next) {
@@ -16,7 +18,9 @@ router.get('/create-account', function (req, res,next) {
 });
 router.post('/create-account', function (req, res, next) {
     userController.createUser(req.body).then((response) => {
-        res.header('x-auth', response.token).send(response);
+        let cookies = new Cookies(req, res, { keys: ['this is secret'] });
+        cookies.set('x-auth-token', response.token, { signed: true });
+        res.redirect('/');
     }).catch((error) => {
         res.render('create_account', {
             title: 'The given data is invalid',
@@ -38,9 +42,11 @@ router.get('/login', (req, res, next) => {
 
 router.post('/login', (req, res, next) => {
     userController.login(req.body).then((response) => {
+        let cookies = new Cookies(req, res, { keys: ['this is secret'] });
+        cookies.set('x-auth-token', response.token, { signed: true });
         res.header('x-auth', response.token).send(response);
     }).catch((errors) => {
-        res.send(errors);
+        res.status(403).send(errors);
     });
 });
 

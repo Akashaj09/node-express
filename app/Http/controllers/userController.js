@@ -1,7 +1,5 @@
 const User = require('../../models/user');
 const bcrypt = require("bcrypt");
-const Token = require('../../models/Token');
-const jwt = require('jsonwebtoken');
 let createUser = (user) => {
     return new Promise((resolve, reject) => {
         User.create({ name: user.name,

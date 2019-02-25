@@ -5,6 +5,7 @@ const auth = require('../../config/auth');
 const Token = require('./Token');
 const Message = require('./message');
 const jwt = require('jsonwebtoken');
+const Cookies = require('cookies');
 
 let UserSchema = {
     name: {
