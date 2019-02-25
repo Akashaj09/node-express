@@ -2,6 +2,7 @@ let express = require('express');
 let router = express.Router();
 let app = require('../app');
 let userController = require(app.controllers+'/userController');
+let auth = require('./auth');
 
 router.get('/', (req, res, next) => {
     res.render("index", {
@@ -15,7 +16,7 @@ router.get('/create-account', function (req, res,next) {
 });
 router.post('/create-account', function (req, res, next) {
     userController.createUser(req.body).then((response) => {
-        res.redirect('/create-success?message=account created successfully');
+        res.header('x-auth', response.token).send(response);
     }).catch((error) => {
         res.render('create_account', {
             title: 'The given data is invalid',
@@ -41,6 +42,10 @@ router.post('/login', (req, res, next) => {
     }).catch((errors) => {
         res.send(errors);
     });
+});
+
+router.get('/user/:token', auth, function (req, res, next) {
+    res.send(req.user);
 });
 
 module.exports = router;

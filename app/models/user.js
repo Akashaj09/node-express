@@ -1,6 +1,7 @@
 'use strict';
 const Sequelize = require('sequelize');
 const sequelize = require('../../config/database');
+const auth = require('../../config/auth');
 const Token = require('./Token');
 const Message = require('./message');
 const jwt = require('jsonwebtoken');
@@ -42,7 +43,12 @@ let User = sequelize.define('user', UserSchema, {
     ]
 });
 User.auth =  (token) => {
-    let decoded = jwt.verify(token, 'abcd123');
+    let decoded;
+    try {
+        decoded = jwt.verify(token, auth.jwt_secret);
+    }catch (exception) {
+        return Promise.reject(exception);
+    }
     return Token.findOne({
         where: {
             token,
@@ -64,6 +70,17 @@ User.auth =  (token) => {
             message: "This token is invalid"
         }
     })
+};
+
+User.createAccessToken = (user) => {
+    const token = jwt.sign({_id: user.id}, auth.jwt_secret).toString();
+    return Token.create({
+        userId: user.id,
+        access: 'auth',
+        token
+    }).then(response => {
+        return response
+    });
 };
 
 User.hasMany(Token, {as: 'tokens', foreignKey: 'userId'});

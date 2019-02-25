@@ -8,7 +8,7 @@ let createUser = (user) => {
             email: user.email,
             password: user.password !== '' ? bcrypt.hashSync(user.password, 10): ''
         }).then((user) => {
-            createAccessToken(user).then(response => {
+            User.createAccessToken(user).then(response => {
                 resolve({
                     status: true,
                     message: 'Successfully logged in',
@@ -44,7 +44,7 @@ let login = (user) => {
                     });
                 }
                 if (response){
-                    createAccessToken(existUser).then(response => {
+                    User.createAccessToken(existUser).then(response => {
                         return resolve({
                             status: true,
                             message: 'Successfully logged in',
@@ -61,17 +61,6 @@ let login = (user) => {
                 message: 'User not found'
             });
         });
-    });
-};
-
-let createAccessToken = (user) => {
-    const token = jwt.sign({_id: user.id}, 'abcd123').toString();
-    return Token.create({
-        userId: user.id,
-        access: 'auth',
-        token
-    }).then(response => {
-        return response
     });
 };
 
