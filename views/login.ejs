@@ -18,7 +18,12 @@
                             <input type="password" class="form-control" name="password" />
                         </div>
                         <div class="form-group text-center">
-                            <button class="btn btn-success" style="width: 140px;">Login</button>
+                            <span class="text-success" id="message"></span>
+                        </div>
+                        <div class="form-group text-center">
+                            <button class="btn btn-success" style="width: 140px;">
+                                <i id="loader"></i>&nbsp;Login
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -30,13 +35,25 @@
 
 <script>
     $("form").submit(function (event) {
+        $("#message").text("");
+        $("#loader").addClass('fa fa-spinner fa-spin');
         $.ajax({
             url: '/login',
             data: $("form").serialize(),
             type: 'POST',
             success: function (response) {
-                alert(response.message);
+                if (response.status){
+                    $("#message").removeClass('text-danger').addClass("text-success").text(response.message);
+                    setTimeout(function () {
+                        $("#loader").removeClass('fa fa-spinner fa-spin');
+                        $("#message").removeClass('text-danger').addClass("text-success").text(response.message);
+                        window.location.href = '/';
+                    }, 500);
+                }
             }
+        }).catch(function (error) {
+            $("#loader").removeClass('fa fa-spinner fa-spin');
+            $("#message").removeClass('text-success').addClass('text-danger').text(error.responseJSON.message);
         });
         event.preventDefault();
     });

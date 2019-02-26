@@ -5,7 +5,6 @@ const auth = require('../../config/auth');
 const Token = require('./Token');
 const Message = require('./message');
 const jwt = require('jsonwebtoken');
-const Cookies = require('cookies');
 
 let UserSchema = {
     name: {
@@ -50,6 +49,47 @@ User.auth =  (token) => {
     }catch (exception) {
         return Promise.reject(exception);
     }
+    return User.findByToken(token, decoded).then(token => {
+        return {
+            id: token.user.id,
+            name: token.user.name,
+            email: token.user.email,
+            createdAt: token.user.createdAt
+        };
+    }).catch(error => {
+        return error;
+    });
+};
+
+User.logout = (token) => {
+    let decoded;
+    try {
+        decoded = jwt.verify(token, auth.jwt_secret);
+    }catch (exception) {
+        return Promise.reject(exception);
+    }
+    return Token.findOne({
+        where: {
+            token,
+            userId: decoded._id,
+            access: 'auth'
+        }
+    }).then((token) => {
+        return token.destroy();
+    }).then(() => {
+        return {
+            status: true,
+            message: 'Successfully logged out'
+        }
+    }).catch(response => {
+        return {
+            status: false,
+            message: "This token is invalid"
+        }
+    })
+};
+
+User.findByToken = (token, decoded) => {
     return Token.findOne({
         where: {
             token,
@@ -60,11 +100,7 @@ User.auth =  (token) => {
             User
         ]
     }).then((token) => {
-        return {
-            name: token.user.name,
-            email: token.user.email,
-            createdAt: token.user.createdAt
-        };
+        return token;
     }).catch(response => {
         return {
             status: false,

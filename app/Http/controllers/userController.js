@@ -62,7 +62,12 @@ let login = (user) => {
     });
 };
 
+let logout = (token) => {
+    return User.logout(token);
+};
+
 module.exports = {
     createUser,
-    login
+    login,
+    logout
 };

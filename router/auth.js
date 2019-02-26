@@ -41,4 +41,4 @@ let authApi = (req, res, next) => {
     });
 };
 
-module.exports = {auth, authApi };
+module.exports = { auth, authApi };

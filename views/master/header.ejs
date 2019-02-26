@@ -6,6 +6,7 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <title><%= title || 'Chat app' %></title>
 </head>
 <body>
@@ -22,12 +23,18 @@
             </li>
         </ul>
         <ul class="my-2 my-lg-0 navbar-nav">
+            <% if (typeof auth === 'undefined'){ %>
             <li class="nav-item active">
                 <a class="nav-link" href="/create-account">Create account</a>
             </li>
             <li class="nav-item active">
                 <a class="nav-link" href="/login">Login</a>
             </li>
+            <% }else{ %>
+                <li class="nav-item active">
+                    <a class="nav-link" href="/profile" ><%= auth.name %></a>
+                </li>
+            <% } %>
         </ul>
     </div>
 </nav>

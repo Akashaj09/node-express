@@ -5,10 +5,10 @@ let Cookies = require('cookies');
 let userController = require(app.controllers+'/userController');
 let auth = require('./auth');
 
-router.get('/', auth, (req, res, next) => {
+router.get('/', auth.auth, (req, res, next) => {
     res.render("index", {
         title: 'Chat app',
-        auth: ''
+        auth: req.user
     });
 });
 router.get('/create-account', function (req, res,next) {
@@ -50,7 +50,17 @@ router.post('/login', (req, res, next) => {
     });
 });
 
-router.get('/user/:token', auth, function (req, res, next) {
+router.post('/logout', (req, res, next) => {
+    let cookies = new Cookies(req, res, { keys: ['this is secret'] });
+    let token = cookies.get('x-auth-token', { signed: true });
+    userController.logout(token).then(response => {
+        res.redirect("/login");
+    }).catch((error) => {
+        res.status(400).send(error);
+    });
+});
+
+router.get('/user/:token', auth.auth,  (req, res, next) => {
     res.send(req.user);
 });
 
