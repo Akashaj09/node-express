@@ -3,7 +3,7 @@
         <img src="/images/loader.gif" style="width: auto; height: 400px;">
     </div>
     <div class="message-holder" v-else>
-        <div class="msg_history">
+        <div class="msg_history" id="messages">
             <div class="message-row" v-for="(message, index) in messages">
                 <div class="incoming_msg" v-if="message.userId != auth.id ">
                     <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
@@ -22,7 +22,7 @@
         </div>
         <div class="type_msg">
             <div class="input_msg_write">
-                <input type="text" class="write_msg" placeholder="Type your message" @keyup.enter="sendMessage"  />
+                <input type="text" class="write_msg" placeholder="Type your message" @keyup.enter="sendMessage" v-model="message.message" />
                 <button class="msg_send_btn" type="button"><i class="fa fa-paper-plane-o" aria-hidden="true" @click="sendMessage"></i></button>
             </div>
         </div>
@@ -37,24 +37,40 @@
         el: "#app",
         data: {
             messages: [],
-            message: {},
+            message: {
+                receiver: '',
+                userId: '',
+                message: '',
+                createdAt: '',
+                updatedAt: '',
+                seen_at: ''
+            },
             loading: true,
             auth: {},
             moment
         },
         methods: {
             getMessage: function(){
-                axios.get("/message/messages/<%= receiver_id %>").then((response) =>
-                {
+                axios.get("/message/messages/<%= receiver_id %>").then((response) => {
                     this.loading = false;
                     this.messages = response.data.messages;
-                    this.auth = response.data.auth
+                    this.auth = response.data.auth;
                 }).catch(function (error) {
                     console.log(error);
                 })
             },
             sendMessage: function () {
-                
+                this.message.receiver = parseInt("<%= receiver_id %>");
+                this.message.userId = this.auth.id;
+                this.message.createdAt = moment().format("YYYY-MM-DD HH:mm:ss");
+                this.message.seen_at = moment().format("YYYY-MM-DD HH:mm:ss");
+                this.message.updatedAt = moment().format("YYYY-MM-DD HH:mm:ss");
+                if (this.message.message !== ""){
+                    this.messages.push(Object.assign({}, this.message));
+                    let container = this.$el.querySelector("#messages");
+                    container.scrollTop = container.scrollHeight;
+                    this.message.message = "";
+                }
             }
         },
         created: function () {
