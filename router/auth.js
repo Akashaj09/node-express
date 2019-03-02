@@ -9,7 +9,7 @@ let auth = (req, res, next) => {
             return res.redirect('/login');
         }
         req.user = user;
-        req.token = user.token;
+        req.token = token;
         next();
     }).catch(() => {
         return res.redirect('/login');

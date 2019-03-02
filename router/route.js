@@ -6,9 +6,11 @@ let userController = require(app.controllers+'/userController');
 let auth = require('./auth');
 
 router.get('/', auth.auth, (req, res, next) => {
-    res.render("index", {
-        title: 'Chat app',
-        auth: req.user
+    let lastMessage = require(app.controllers+'/MessageController').lastMessage(req.user);
+    lastMessage.then((message) => {
+        res.redirect("/message/user/"+message.userId);
+    }).catch((errors) => {
+        res.send(errors);
     });
 });
 router.get('/create-account', function (req, res,next) {

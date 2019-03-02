@@ -20,7 +20,9 @@ app.use(flash());
 
 /*routing*/
 let indexRouter = require('./router/route');
+let messageRouter = require('./router/message');
 app.use('/', indexRouter);
+app.use('/message', messageRouter);
 
 /*server*/
 app.listen(3000, () => {
