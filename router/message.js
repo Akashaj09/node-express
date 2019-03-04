@@ -27,4 +27,15 @@ router.get("/messages/:id", auth.auth, (req, res, next) => {
     });
 });
 
+router.post('/store-user-message', auth.auth, (req, res, next) => {
+    messageController.storeMessage(req.body).then(() => {
+        res.send({
+            status: true,
+            message: "Message has been send"
+        });
+    }).catch((error) => {
+        res.status(500).send(error);
+    })
+});
+
 module.exports = router;

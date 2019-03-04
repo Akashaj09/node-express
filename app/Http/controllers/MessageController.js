@@ -78,8 +78,23 @@ let lastMessage = (user) => {
     });
 };
 
+let storeMessage = (message) => {
+    return new Promise((resolve, reject) => {
+        Message.create({
+            message: message.message,
+            receiver: message.receiver,
+            userId: message.userId
+        }).then(response => {
+            resolve(response);
+        }).catch(error => {
+            reject(error);
+        });
+    });
+};
+
 module.exports = {
     users,
     messages,
-    lastMessage
+    lastMessage,
+    storeMessage
 };

@@ -31,7 +31,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.js" ></script>
-<script src="https://momentjs.com/downloads/moment.min.js"></script>
+<script src="/js/moment.js"></script>
 <script>
     new Vue({
         el: "#app",
@@ -67,14 +67,22 @@
                 this.message.updatedAt = moment().format("YYYY-MM-DD HH:mm:ss");
                 if (this.message.message !== ""){
                     this.messages.push(Object.assign({}, this.message));
-                    let container = this.$el.querySelector("#messages");
-                    container.scrollTop = container.scrollHeight;
-                    this.message.message = "";
+                    axios.post("/message/store-user-message", this.message).then((response) => {
+                        this.message.message = "";
+                        console.log(response);
+                    }).catch(error => {
+                        this.message.message = "";
+                        console.log(error);
+                    });
                 }
             }
         },
         created: function () {
             this.getMessage();
+        },
+        updated: function () {
+            let container = this.$el.querySelector("#messages");
+            container.scrollTop = container.scrollHeight;
         }
     });
 </script>
