@@ -10,6 +10,7 @@ router.get('/user/:id', auth.auth, (req, res, next) => {
             users: response,
             receiver_id: req.params.id,
             title: "Chat",
+            auth: req.user
         })
     }).catch((error) => {
         res.send(error);

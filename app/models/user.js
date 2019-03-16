@@ -12,7 +12,7 @@ let UserSchema = {
         defaultValue: '',
     },
     email: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING(191),
         validate: {
             isEmail: {
                 msg: 'This is not a valid email'
@@ -54,7 +54,8 @@ User.auth =  (token) => {
             id: token.user.id,
             name: token.user.name,
             email: token.user.email,
-            createdAt: token.user.createdAt
+            createdAt: token.user.createdAt,
+            token: token.token
         };
     }).catch(error => {
         return error;

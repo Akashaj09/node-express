@@ -29,9 +29,17 @@
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.js" ></script>
+<script src="/js/vue.js"></script>
+<script src="/js/axios.js" ></script>
 <script src="/js/moment.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+    const socket = io();
+    socket.on("connect", () => {
+        console.log("Connected");
+    })
+</script>
 <script>
     new Vue({
         el: "#app",
@@ -47,7 +55,8 @@
             },
             loading: true,
             auth: {},
-            moment
+            moment,
+            socket: {}
         },
         methods: {
             getMessage: function(){
@@ -55,6 +64,15 @@
                     this.loading = false;
                     this.messages = response.data.messages;
                     this.auth = response.data.auth;
+                    this.socket = io({
+                        transportOptions: {
+                            pooling: {
+                                extraHeaders: {
+                                    'Authorization' : this.auth.token
+                                }
+                            }
+                        }
+                    });
                 }).catch(function (error) {
                     console.log(error);
                 })
@@ -68,8 +86,8 @@
                 if (this.message.message !== ""){
                     this.messages.push(Object.assign({}, this.message));
                     axios.post("/message/store-user-message", this.message).then((response) => {
+                        this.socket.emit("send-new-message", this.message);
                         this.message.message = "";
-                        console.log(response);
                     }).catch(error => {
                         this.message.message = "";
                         console.log(error);
@@ -79,6 +97,9 @@
         },
         created: function () {
             this.getMessage();
+            socket.on("message/<%= auth.id %>/<%= receiver_id %>", (message) => {
+                this.messages.push(message);
+            })
         },
         updated: function () {
             let container = this.$el.querySelector("#messages");

@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize');
-const sequelize = new Sequelize('node_chat', 'root', '', {
+const sequelize = new Sequelize('node_chat', 'phpmyadmin', '1106', {
     host: 'localhost',
     dialect: 'mysql',
     port: 3306,
