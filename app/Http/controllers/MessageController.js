@@ -22,7 +22,6 @@ let users = (user) => {
 };
 
 let messages = (receiver, user) => {
-    console.log(receiver, user.id);
     return new Promise((resolve, reject) => {
          Message.findAll({
             where:{
@@ -56,24 +55,22 @@ let lastMessage = (user) => {
                 ['id', 'desc']
             ]
         }).then((message) => {
-            resolve(message);
+            if (message !== null){
+                resolve(message);
+            }
+            if (message === null){
+                findLastUser(user).then(user => {
+                    resolve({
+                        userId: user.id
+                    });
+                }).catch();
+            }
         }).catch((error => {
-            User.findOne({
-                where: {
-                    id: {
-                        [Op.ne]: [user.id]
-                    }
-                },
-                order: [
-                    ['id', 'desc']
-                ]
-            }).then((user) => {
+            findLastUser(user).then(user => {
                 resolve({
                     userId: user.id
                 });
-            }).catch((error) => {
-                reject(error);
-            });
+            })
         }))
     });
 };
@@ -90,6 +87,23 @@ let storeMessage = (message) => {
             reject(error);
         });
     });
+};
+
+let findLastUser = (user) => {
+   return User.findOne({
+      where: {
+          id: {
+              [Op.ne]: [user.id]
+          }
+      },
+      order: [
+          ['id', 'desc']
+      ]
+  }).then(user => {
+      return user;
+   }).catch(error => {
+       return error;
+   })
 };
 
 module.exports = {
